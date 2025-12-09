@@ -1,0 +1,64 @@
+<form version="1.1" theme="dark">
+  <search id="main">
+    <query>
+    index="ajd*" 
+  </query>
+    <earliest>$tImespan.earliest$</earliest>
+    <latest>$tImespan.latest$</latest>
+  </search>
+  <label>Overview</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="tImespan" searchWhenChanged="true">
+      <label>TIme span</label>
+      <default>
+        <earliest>-4h@m</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>| tstats count WHERE index="ajd*"</query>
+          <earliest>$tImespan.earliest$</earliest>
+          <latest>$tImespan.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <search base="main">
+          <query>| timechart count by host</query>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <input type="dropdown" token="host" searchWhenChanged="true">
+        <label>host</label>
+        <selectFirstChoice>true</selectFirstChoice>
+        <fieldForLabel>host</fieldForLabel>
+        <fieldForValue>host</fieldForValue>
+        <search base="main">
+          <query>| stats count by host</query>
+        </search>
+      </input>
+      <event>
+        <search base="main">
+          <query>| search host=$host$</query>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+  </row>
+</form>
